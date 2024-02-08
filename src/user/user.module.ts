@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entities/user.entity/user.entity';
 import { Role, RoleSchema } from './entities/role.entity/role.entity';
+import { UserUtilService } from './user.util';
 
 @Module({
   imports: [MongooseModule.forFeature([
@@ -12,7 +13,7 @@ import { Role, RoleSchema } from './entities/role.entity/role.entity';
 
   ])],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserUtilService],
   exports: [UserService]
 })
 export class UserModule {}

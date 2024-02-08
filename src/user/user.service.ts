@@ -2,19 +2,23 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './entities/user.entity/user.entity'
-import * as bcryptjs from 'bcryptjs';
-import { CreateUserDto } from './dto/create.user.dto';
-import { validate } from 'class-validator';
 import { Role } from './entities/role.entity/role.entity';
+import { UserUtilService } from './user.util'; // Adjust the path
+import { CreateUserDto } from './dto/create.user.dto';
+import * as bcryptjs from 'bcryptjs';
+import { validate } from 'class-validator';
+import * as nodemailer from 'nodemailer';
 
-// import * as jwt from 'jsonwebtoken';
+
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UserService {
-    constructor(
-      @InjectModel(User.name) private readonly userModel: Model<User>,
-      @InjectModel(Role.name) private readonly roleModel: Model<Role>,
-      ) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(Role.name) private readonly roleModel: Model<Role>,
+    private readonly userUtilService: UserUtilService
+  ) { }
 
   async registerUser(userData: any): Promise<any> {
 
@@ -29,7 +33,6 @@ export class UserService {
 
     // Validate the DTO using class-validator
     const validationErrors = await validate(createUserDto);
-    console.log(validationErrors)
 
     if (validationErrors.length > 0) {
       // Validation errors occurred, throw an exception with the details
@@ -72,47 +75,53 @@ export class UserService {
 
     // Remove the password from the response
     delete userObject.password;
+    
+    // Generate and send activation email
+    const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
+    const tokenWithHyphens = token.replace(/\./g, '~');
+    let mailType = {
+      from: 'castilla@hospital.com',
+      to: userData.email,
+      subject: 'Account activation link',
+      html: `<div class="con">
+      <h2>Hello ${userData.name}</h2>
+      <h3> Click the link to activate your account </h3>
+          <a class="btn" href="http://localhost:5173/verifyEmail/${tokenWithHyphens}">Active Your Account</a>
+        </div>
+        <style>
+          .con{
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+          }
+          .btn{
+            background-color: #4CAF50;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            border-width: 0;
+            margin-top: 15px;
+            padding: 10px 32px;
+            color: white;
+            text-decoration: none; 
+          }
+          </style>`,
+        };
+        console.log("wwwww")
+        await this.userUtilService.sendMailToUser(mailType);
+        
+        return { success: 'Registration Successfully, Please Verify Your Email', newUser: userData };
+        
 
+    // import * as nodemailer from 'nodemailer';
 
-      // Generate and send activation email
-    //   const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
-    //   const tokenWithHyphens = token.replace(/\./g, '~');
-
-    //   let mailType = {
-    //     from: 'castilla@hospital.com',
-    //     to: userData.email,
-    //     subject: 'Account activation link',
-    //     html: `<div class="con">
-    //       <h2>Hello ${userData.name}</h2>
-    //       <h3> Click the link to activate your account </h3>
-    //       <a class="btn" href="http://localhost:5173/verifyEmail/${tokenWithHyphens}">Active Your Account</a>
-    //     </div>
-    //     <style>
-    //       .con{
-    //         display: flex;
-    //         align-items: center;
-    //         flex-direction: column;
-    //         justify-content: center;
-    //         height: 100vh;
-    //       }
-    //       .btn{
-    //         background-color: #4CAF50;
-    //         font-size: 16px;
-    //         font-weight: bold;
-    //         border-radius: 30px;
-    //         border-width: 0;
-    //         margin-top: 15px;
-    //         padding: 10px 32px;
-    //         color: white;
-    //         text-decoration: none; 
-    //       }
-    //     </style>`,
-    //   };
-    //   sendMailToUser(mailType);
-
-      return { success: 'Registration Successfully, Please Verify Your Email', newUser: userData };
-    } catch (err) {
-      throw new NotFoundException(err);
-    }
+    
+    // export default sendMailToUser;
+    
   }
+  
+  
 
+}
