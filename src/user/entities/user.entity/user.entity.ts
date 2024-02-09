@@ -20,6 +20,9 @@ export class User {
 
     @Prop({ type: Types.ObjectId, ref: 'Role', required: true }) 
     roleId: Types.ObjectId;
+
+    @Prop({ default: false }) 
+    isActive: boolean;
 }
 
 export type UserDocument = User & Document;

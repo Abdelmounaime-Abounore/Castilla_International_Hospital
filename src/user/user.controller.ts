@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('register')
@@ -12,6 +12,16 @@ export class UserController {
       return result;
     } catch (error) {
       return { error: error.message };
+    }    
+  }
+
+  @Get(':token')
+  async verifyEmail(@Param('token') token: string) {
+    try {
+      await this.userService.verifyTokenAndActivateAccount(token);
+      return 'Email verified successfully. Your account is now activated.';
+    } catch (error) {
+      return error.message;
     }
   }
 }

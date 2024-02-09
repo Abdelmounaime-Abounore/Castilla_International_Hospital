@@ -28,6 +28,7 @@ export class UserService {
     createUserDto.phoneNumber = userData.phoneNumber;
     createUserDto.email = userData.email;
     createUserDto.password = userData.password;
+    createUserDto.confirmPassword = userData.confirmPassword;
     createUserDto.image = userData.image;
     createUserDto.roleId = userData.roleId;
 
@@ -67,6 +68,7 @@ export class UserService {
       password: hashedPassword,
       image: userData.image,
       roleId: userData.roleId,
+      isActive: false,
     });
 
     // Save the new user
@@ -109,7 +111,6 @@ export class UserService {
           }
           </style>`,
         };
-        console.log("wwwww")
         await this.userUtilService.sendMailToUser(mailType);
         
         return { success: 'Registration Successfully, Please Verify Your Email', newUser: userData };
@@ -122,6 +123,31 @@ export class UserService {
     
   }
   
+  async verifyUserToken(token: string): Promise<string | null> {
+    try {
+      const decodedToken: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      return decodedToken.userId;
+    } catch (error) {
+      // Token is invalid or expired
+      return null;
+    }
+  }
+
+  // async activateUserAccount(userId: string): Promise<void> {
+    // Update the user record to mark it as activated
+  //   await this.userModel.updateOne({ _id: userId }, { isActive: true });
+  // }
   
+  async verifyTokenAndActivateAccount(token: string): Promise<boolean> {
+    const userId = await this.verifyUserToken(token);
+
+    if (userId) {
+      // Token is valid, activate user account
+      await this.userModel.updateOne({ _id: userId }, { isActive: true });
+      return true;
+    } else {
+      throw new NotFoundException('Invalid or expired token.');
+    }
+  }
 
 }
