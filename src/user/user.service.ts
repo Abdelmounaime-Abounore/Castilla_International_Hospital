@@ -79,8 +79,8 @@ export class UserService {
     delete userObject.password;
     
     // Generate and send activation email
-    const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' });
-    const tokenWithHyphens = token.replace(/\./g, '~');
+    const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+    // const tokenWithHyphens = token.replace(/\./g, '~');
     let mailType = {
       from: 'castilla@hospital.com',
       to: userData.email,
@@ -88,7 +88,7 @@ export class UserService {
       html: `<div class="con">
       <h2>Hello ${userData.name}</h2>
       <h3> Click the link to activate your account </h3>
-          <a class="btn" href="http://localhost:5173/verifyEmail/${tokenWithHyphens}">Active Your Account</a>
+          <a class="btn" href="http://localhost:8000/register/${token}">Active Your Account</a>
         </div>
         <style>
           .con{
@@ -123,27 +123,20 @@ export class UserService {
     
   }
   
-  async verifyUserToken(token: string): Promise<string | null> {
+  async verifyUserToken(token: string): Promise<any> {
     try {
-      const decodedToken: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-      return decodedToken.userId;
+      const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      return decodedToken.email;
     } catch (error) {
-      // Token is invalid or expired
+      console.error('Error:', error.message);
       return null;
     }
   }
-
-  // async activateUserAccount(userId: string): Promise<void> {
-    // Update the user record to mark it as activated
-  //   await this.userModel.updateOne({ _id: userId }, { isActive: true });
-  // }
   
   async verifyTokenAndActivateAccount(token: string): Promise<boolean> {
-    const userId = await this.verifyUserToken(token);
-
-    if (userId) {
-      // Token is valid, activate user account
-      await this.userModel.updateOne({ _id: userId }, { isActive: true });
+    const userMail = await this.verifyUserToken(token);
+    if (userMail) {
+      await this.userModel.updateOne({ email: userMail }, { isActive: true });
       return true;
     } else {
       throw new NotFoundException('Invalid or expired token.');

@@ -18,6 +18,7 @@ export class UserController {
   @Get(':token')
   async verifyEmail(@Param('token') token: string) {
     try {
+      // console.log("first")
       await this.userService.verifyTokenAndActivateAccount(token);
       return 'Email verified successfully. Your account is now activated.';
     } catch (error) {
