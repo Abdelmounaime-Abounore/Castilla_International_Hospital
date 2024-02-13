@@ -143,4 +143,31 @@ export class UserService {
     }
   }
 
+  async login(loginData: any): Promise<any> {
+    // const { error } = LoginValidation(loginData);
+
+    // if (error) {
+    //   throw new NotFoundException(error.details[0].message);
+    // }
+
+    const user = await this.userModel.findOne({ email: loginData.email });
+
+    if (!user) {
+      throw new NotFoundException('This Email is not found');
+    }
+
+    const validPass = await bcryptjs.compare(loginData.password, user.password);
+    if (!validPass) {
+      throw new NotFoundException('Invalid password');
+    }
+
+    if (!user.isActive) {
+      throw new NotFoundException('Please verify your email');
+    }
+
+    const token = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET);
+
+    return { success: 'Login Successful', user, token };
+  }
+
 }

@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
+import { Response, Request } from 'express';
 
 @Controller('register')
 export class UserController {
@@ -24,5 +25,28 @@ export class UserController {
     } catch (error) {
       return error.message;
     }
+  }
+
+  @Post('login')
+  async login(@Body() loginData: any, @Res({ passthrough: true }) res: Response): Promise<any> {
+    try {
+      const {token} = await this.userService.login(loginData);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+      });
+      return { success: 'Login Successful'};
+    } catch (error) {
+      console.log(error)
+      return { error: error.message };
+    }
+  }
+
+  @Post('check')
+  async validateToken(@Req() req: Request) {
+    console.log(req)
+    const tokenCookie = req.cookies['token'];
+    console.log(tokenCookie);
+    return true;
   }
 }
