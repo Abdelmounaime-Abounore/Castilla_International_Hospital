@@ -74,13 +74,11 @@ export class UserService {
     // Save the new user
     const savedUser = await newUser.save();
     let userObject = savedUser.toObject();
-
     // Remove the password from the response
     delete userObject.password;
-    
     // Generate and send activation email
     const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
-    // const tokenWithHyphens = token.replace(/\./g, '~');
+    
     let mailType = {
       from: 'castilla@hospital.com',
       to: userData.email,
@@ -88,7 +86,7 @@ export class UserService {
       html: `<div class="con">
       <h2>Hello ${userData.name}</h2>
       <h3> Click the link to activate your account </h3>
-          <a class="btn" href="http://localhost:8000/register/${token}">Active Your Account</a>
+          <a class="btn" href="http://localhost:3000/register/${token}">Active Your Account</a>
         </div>
         <style>
           .con{
@@ -113,7 +111,7 @@ export class UserService {
         };
         await this.userUtilService.sendMailToUser(mailType);
         
-        return { success: 'Registration Successfully, Please Verify Your Email', newUser: userData };
+        return { success: 'Registration Successfully, Please Verify Your Email', newUser: userObject };
         
 
     // import * as nodemailer from 'nodemailer';

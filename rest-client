@@ -1,0 +1,12 @@
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+    "name": "Aabounore",
+    "phoneNumber": "1234567893",
+    "email": "abounore_98@hotmail.com",
+    "password": "eemail@gmail.com",
+    "confirmPassword": "eemail@gmail.com",
+    "image": "image.jpg",
+    "roleId": "65c4ce0e1f5f1cbc66cd2a56"
+}
