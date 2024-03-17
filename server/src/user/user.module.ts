@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './entities/user.entity/user.entity';
-import { Role, RoleSchema } from './entities/role.entity/role.entity';
+import { User, UserSchema } from './entity/user.entity';
 import { UserUtilService } from './user.util';
+import { Role, RoleSchema } from 'src/role/entity/role.entity';
 
 @Module({
   imports: [MongooseModule.forFeature([

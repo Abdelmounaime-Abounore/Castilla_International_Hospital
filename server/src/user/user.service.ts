@@ -1,8 +1,8 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { User } from './entities/user.entity/user.entity'
-import { Role } from './entities/role.entity/role.entity';
+import { User } from './entity/user.entity'
+import { Role } from '../role/entity/role.entity';
 import { UserUtilService } from './user.util'; // Adjust the path
 import { CreateUserDto } from './dto/create.user.dto';
 import * as bcryptjs from 'bcryptjs';
@@ -23,7 +23,9 @@ export class UserService {
   async registerUser(userData: any): Promise<any> {
 
     // Validate the user data using the CreateUserDto
+    
     const createUserDto = new CreateUserDto();
+    
     createUserDto.name = userData.name;
     createUserDto.phoneNumber = userData.phoneNumber;
     createUserDto.email = userData.email;
@@ -31,11 +33,14 @@ export class UserService {
     createUserDto.confirmPassword = userData.confirmPassword;
     createUserDto.image = userData.image;
     createUserDto.roleId = userData.roleId;
-
+    createUserDto.cv = userData.cv;    
+    
+    console.log(createUserDto);
     // Validate the DTO using class-validator
     const validationErrors = await validate(createUserDto);
-
+    
     if (validationErrors.length > 0) {
+      
       // Validation errors occurred, throw an exception with the details
       throw new ConflictException(validationErrors.map(error => Object.values(error.constraints).join(', ')).join(', '));
     }
@@ -45,7 +50,7 @@ export class UserService {
     if (emailExists) {
       throw new NotFoundException('This Email is already exists. Try to sign in.');
     }
-
+    
     if (userData.password !== userData.confirmPassword) {
       throw new ConflictException('Password and Confirm Password do not match.');
     }
@@ -55,7 +60,9 @@ export class UserService {
     const hashedPassword = await bcryptjs.hash(userData.password, genSalt);
 
     // Check if roleId exists in the roles collection
+    
     const roleExists = await this.roleModel.findById(userData.roleId);
+
     if (!roleExists) {
       throw new NotFoundException('Invalid roleId. Role not found.');
     }
@@ -70,9 +77,17 @@ export class UserService {
       roleId: userData.roleId,
       isActive: false,
     });
-
+    
     // Save the new user
-    const savedUser = await newUser.save();
+    let savedUser;
+    try {
+        savedUser = await newUser.save();
+        console.log("Result of newUser.save():", savedUser);
+    } catch (error) {
+        console.error("Error saving user:", error);
+        throw error; // Rethrow the error to propagate it to the caller
+    }    
+    console.log("savedUser");
     let userObject = savedUser.toObject();
     // Remove the password from the response
     delete userObject.password;

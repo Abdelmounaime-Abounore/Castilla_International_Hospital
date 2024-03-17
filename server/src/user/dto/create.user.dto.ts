@@ -1,4 +1,4 @@
-import { Equals, IsEmail, IsNotEmpty, IsString, Matches, isNotEmpty, isString } from "class-validator";
+import { Equals, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, isNotEmpty, isString } from "class-validator";
 
 export class CreateUserDto {
     @IsNotEmpty({ message: 'Name is required' })
@@ -19,8 +19,11 @@ export class CreateUserDto {
     @IsNotEmpty({ message: 'Password confirmation is required' })
     confirmPassword: string;
 
+    @IsOptional()
+    cv: string;
 
-    @IsNotEmpty({ message: 'Image is required' })
+
+    @IsOptional()
     image: string;
 
     @IsNotEmpty({ message: 'Role is required' })
