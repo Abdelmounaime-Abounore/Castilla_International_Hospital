@@ -2,16 +2,16 @@ import { Body, Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Response, Request } from 'express';
 
-@Controller('register')
+@Controller('auth')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
+  @Post("register")
   async registerUser(@Body() userData: any): Promise<any> {
     
     try {
       const result = await this.userService.registerUser(userData);
-      console.log("controller");
+      console.log("test2");
       return result;
     } catch (error) {
       return { error: error.message };

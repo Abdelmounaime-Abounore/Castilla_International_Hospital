@@ -48,27 +48,40 @@ const Register = () => {
       try {
         console.log('Submitting form with values:', values);
         await mutation.mutateAsync(values);
-        console.log('register successfully');
+        // The following line should only execute when the request is successful
+        console.log("success");
         // navigate('/users-list');
       } catch (error) {
         console.error('Error:', error);
       }
     },
   });
-
+  
   const mutation = useMutation(
-
-    (data: UserData) => axios.post('http://localhost:3000/register', data),
+    (data: UserData) => axios.post('http://localhost:3000/auth/register', data),
     {
-      onSuccess: () => {
-        console.log("gggg");
-        message.success('register successfully');
+      onSuccess: (response) => {
+        const { data } = response;
+        if (data && data.success) {
+          message.success(data.success); 
+        } else {
+          console.log("Registration success, but no success message received from backend");
+        }
       },
       onError: (error) => {
-        message.error(`Error updating employee: ${error.message}`);
+        console.log("hhhhh");
+        
+        if (error.response && error.response.data && error.response.data.error) {
+          message.error(error.response.data.error); // Display error message from backend
+        } else {
+          console.error(error); // Log the error for debugging
+          message.error('An error occurred during registration'); // Display generic error message
+        }
       },
     }
   );
+  
+  
 
   const [selectedRole, setSelectedRole] = useState('');
 
@@ -199,9 +212,10 @@ const Register = () => {
               <div>
                 <label htmlFor="roleId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Role <span className='text-red-600'>*</span> </label>
                 <select
-                  className="custom-select"
+                  // className="custom-select"
                   name="companyId"
                   value={formik.values.roleId}
+                  className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   onChange={handleSlectForm}
                 >
                   <option value="">Register as ..</option>

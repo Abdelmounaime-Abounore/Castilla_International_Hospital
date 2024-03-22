@@ -11,6 +11,7 @@ import * as nodemailer from 'nodemailer';
 
 
 import * as jwt from 'jsonwebtoken';
+import { error } from 'console';
 
 @Injectable()
 export class UserService {
@@ -21,8 +22,6 @@ export class UserService {
   ) { }
 
   async registerUser(userData: any): Promise<any> {
-
-    // Validate the user data using the CreateUserDto
     
     const createUserDto = new CreateUserDto();
     
@@ -35,13 +34,13 @@ export class UserService {
     createUserDto.roleId = userData.roleId;
     createUserDto.cv = userData.cv;    
     
-    console.log(createUserDto);
+    // console.log(createUserDto);
     // Validate the DTO using class-validator
     const validationErrors = await validate(createUserDto);
     
     if (validationErrors.length > 0) {
-      
       // Validation errors occurred, throw an exception with the details
+      console.error(validationErrors);
       throw new ConflictException(validationErrors.map(error => Object.values(error.constraints).join(', ')).join(', '));
     }
 
@@ -66,7 +65,7 @@ export class UserService {
     if (!roleExists) {
       throw new NotFoundException('Invalid roleId. Role not found.');
     }
-
+    
     // Create a new user instance
     const newUser = new this.userModel({
       name: userData.name,
@@ -86,8 +85,7 @@ export class UserService {
     } catch (error) {
         console.error("Error saving user:", error);
         throw error; // Rethrow the error to propagate it to the caller
-    }    
-    console.log("savedUser");
+    }    console.log("savedUser");
     let userObject = savedUser.toObject();
     // Remove the password from the response
     delete userObject.password;
