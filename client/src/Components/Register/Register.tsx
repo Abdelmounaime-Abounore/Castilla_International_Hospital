@@ -5,10 +5,11 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import "./index.scss"
 import { message } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 
 const Register = () => {
-
+  const navigate = useNavigate()
   interface UserData {
     name: string;
     email: string;
@@ -48,9 +49,6 @@ const Register = () => {
       try {
         console.log('Submitting form with values:', values);
         await mutation.mutateAsync(values);
-        // The following line should only execute when the request is successful
-        console.log("success");
-        // navigate('/users-list');
       } catch (error) {
         console.error('Error:', error);
       }
@@ -63,14 +61,11 @@ const Register = () => {
       onSuccess: (response) => {
         const { data } = response;
         if (data && data.success) {
+          navigate('/login');
           message.success(data.success); 
-        } else {
-          console.log("Registration success, but no success message received from backend");
         }
       },
       onError: (error) => {
-        console.log("hhhhh");
-        
         if (error.response && error.response.data && error.response.data.error) {
           message.error(error.response.data.error); // Display error message from backend
         } else {
@@ -275,7 +270,7 @@ const Register = () => {
                 Register
               </button>
               <p className="text-sm text-left font-light text-gray-500 dark:text-gray-400">
-                Already have an account? <a href="#" className="font-medium text-purple-900 hover:underline dark:text-primary-500">Login here</a>
+                Already have an account? <a href="/login" className="font-medium text-purple-900 hover:underline dark:text-primary-500">Login here</a>
               </p>
             </div>
           </form>

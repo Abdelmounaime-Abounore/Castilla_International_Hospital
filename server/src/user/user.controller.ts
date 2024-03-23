@@ -19,29 +19,19 @@ export class UserController {
   }
 
   @Get(':token')
-  async verifyEmail(@Param('token') token: string) {
+  async verifyEmail(@Param('token') token: string, @Res() res: Response) {
     try {
       // console.log("first")
       await this.userService.verifyTokenAndActivateAccount(token);
-      return 'Email verified successfully. Your account is now activated.';
+      return res.redirect('http://localhost:5173/login');
     } catch (error) {
       return error.message;
     }
   }
 
   @Post('login')
-  async login(@Body() loginData: any, @Res({ passthrough: true }) res: Response): Promise<any> {
-    try {
-      const {token} = await this.userService.login(loginData);
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: true,
-      });
-      return { success: 'Login Successful'};
-    } catch (error) {
-      console.log(error)
-      return { error: error.message };
-    }
+  async loginUser(@Body()  loginData: any): Promise<{ token: string }> {
+    return this.userService.login(loginData);
   }
 
   @Post('check')

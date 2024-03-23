@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './entity/user.entity'
@@ -7,6 +7,10 @@ import { UserUtilService } from './user.util'; // Adjust the path
 import { CreateUserDto } from './dto/create.user.dto';
 import * as bcryptjs from 'bcryptjs';
 import { validate } from 'class-validator';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'jsonwebtoken'; // Import JwtPayload type
+
 import * as nodemailer from 'nodemailer';
 
 
@@ -18,8 +22,9 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(Role.name) private readonly roleModel: Model<Role>,
-    private readonly userUtilService: UserUtilService
-  ) { }
+    private readonly userUtilService: UserUtilService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async registerUser(userData: any): Promise<any> {
     
@@ -99,7 +104,7 @@ export class UserService {
       html: `<div class="con">
       <h2>Hello ${userData.name}</h2>
       <h3> Click the link to activate your account </h3>
-          <a class="btn" href="http://localhost:3000/register/${token}">Active Your Account</a>
+          <a class="btn" href="http://localhost:3000/auth/${token}">Active Your Account</a>
         </div>
         <style>
           .con{
@@ -136,12 +141,12 @@ export class UserService {
   
   async verifyUserToken(token: string): Promise<any> {
     try {
-      const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      const decodedToken: JwtPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET) as JwtPayload;
       return decodedToken.email;
-    } catch (error) {
+  } catch (error) {
       console.error('Error:', error.message);
       return null;
-    }
+  }
   }
   
   async verifyTokenAndActivateAccount(token: string): Promise<boolean> {
@@ -153,32 +158,29 @@ export class UserService {
       throw new NotFoundException('Invalid or expired token.');
     }
   }
-
-  async login(loginData: any): Promise<any> {
-    // const { error } = LoginValidation(loginData);
-
-    // if (error) {
-    //   throw new NotFoundException(error.details[0].message);
-    // }
-
-    const user = await this.userModel.findOne({ email: loginData.email });
-
+  
+  async login(loginData: any): Promise<{ token: string }> {
+    const { email, password } = loginData;
+    console.log(email);
+    
+    // Find user by email
+    const user = await this.userModel.findOne({ email });
+    console.log(user);
     if (!user) {
-      throw new NotFoundException('This Email is not found');
+      
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    const validPass = await bcryptjs.compare(loginData.password, user.password);
-    if (!validPass) {
-      throw new NotFoundException('Invalid password');
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    if (!user.isActive) {
-      throw new NotFoundException('Please verify your email');
-    }
-
-    const token = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET);
-
-    return { success: 'Login Successful', user, token };
+    // Generate JWT token
+    const token = this.jwtService.sign({ userId: user.id });
+    console.log(token);
+    
+    return { token };
   }
-
 }
