@@ -3,7 +3,7 @@ import { useMutation, useQuery } from 'react-query';
 import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import "./index.scss"
+import styles from './register.module.scss';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -107,7 +107,7 @@ const Register = () => {
 };
 
   return (
-    <section className="section">
+    <section className={styles.registerSection}>
       <div className="flex flex-col items-center justify-center h-screen">
         <div className="w-full max-w-md bg-white rounded-lg shadow p-6 dark:bg-gray-800 dark:border-gray-700">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white pb-6">
@@ -131,7 +131,7 @@ const Register = () => {
 
               />
               {formik.touched.name && formik.errors.name && (
-                <div className="error">{formik.errors.name}</div>
+                <div className={styles.error}>{formik.errors.name}</div>
               )}
             </div>
             <div className="flex space-x-4">
@@ -148,7 +148,7 @@ const Register = () => {
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                  <div className="error">{formik.errors.phoneNumber}</div>
+                  <div className={styles.error}>{formik.errors.phoneNumber}</div>
                 )}
               </div>
               <div className="flex-grow">
@@ -164,7 +164,7 @@ const Register = () => {
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.email && formik.errors.email && (
-                  <div className="error">{formik.errors.email}</div>
+                  <div className={styles.error}>{formik.errors.email}</div>
                 )}
               </div>
             </div>
@@ -183,7 +183,7 @@ const Register = () => {
 
                 />
                 {formik.touched.password && formik.errors.password && (
-                  <div className="error">{formik.errors.password}</div>
+                  <div className={styles.error}>{formik.errors.password}</div>
                 )}
               </div>
               <div className="flex-grow">
@@ -199,7 +199,7 @@ const Register = () => {
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-                  <div className="error">{formik.errors.confirmPassword}</div>
+                  <div className={styles.error}>{formik.errors.confirmPassword}</div>
                 )}
               </div>
             </div>
@@ -222,7 +222,7 @@ const Register = () => {
                 </select>
 
                 {formik.touched.roleId && formik.errors.roleId && (
-                  <div className="error">{formik.errors.roleId}</div>
+                  <div className={styles.error}>{formik.errors.roleId}</div>
                 )}
               </div>
               <div>
@@ -238,7 +238,7 @@ const Register = () => {
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.image && formik.errors.image && (
-                  <div className="error">{formik.errors.image}</div>
+                  <div className={styles.error}>{formik.errors.image}</div>
                 )}
               </div>
             </div>
@@ -255,7 +255,7 @@ const Register = () => {
                   onBlur={formik.handleBlur}
                 />
                 {formik.touched.cv && formik.errors.cv && (
-                  <div className="error">{formik.errors.cv}</div>
+                  <div className={styles.error}>{formik.errors.cv}</div>
                 )}
               </div>
             )}

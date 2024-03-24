@@ -1,0 +1,26 @@
+#register {
+    width: 50%;
+}
+
+.registerSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url('../../assets/images/auth-bg.jpg'); 
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .error {
+    font-size: 13px;
+    color: red;
+    font-weight: 600;
+  }
+
+  .select, .register, .inputs {
+    &:focus-visible, &:focus {
+        outline: none;
+    }
+  }
+  

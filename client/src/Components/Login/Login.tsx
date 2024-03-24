@@ -3,7 +3,7 @@ import { useMutation, useQuery } from 'react-query';
 import { Formik, Form, Field, ErrorMessage, useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import "./index.scss"
+import styles from './login.module.scss';
 import { message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
@@ -62,7 +62,7 @@ const Login = () => {
     );
 
     return (
-        <section className="section">
+        <section className={styles.loginSection}>
             <div className="flex flex-col items-center justify-center h-screen w-3/5">
                 <div className="w-full max-w-md bg-white rounded-lg shadow p-6 dark:bg-gray-800 dark:border-gray-700">
                     <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white pb-6">
@@ -85,7 +85,7 @@ const Login = () => {
                                 onBlur={formik.handleBlur}
                             />
                             {formik.touched.email && formik.errors.email && (
-                                <div className="error">{formik.errors.email}</div>
+                                <div className={styles.error}>{formik.errors.email}</div>
                             )}
                         </div>
                         <div className="flex-grow">
@@ -102,7 +102,7 @@ const Login = () => {
 
                             />
                             {formik.touched.password && formik.errors.password && (
-                                <div className="error">{formik.errors.password}</div>
+                                <div className={styles.error}>{formik.errors.password}</div>
                             )}
                         </div>
                         <div className="flex justify-between items-center pt-5">

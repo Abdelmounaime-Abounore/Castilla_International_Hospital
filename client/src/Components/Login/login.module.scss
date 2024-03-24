@@ -1,18 +1,14 @@
-#register {
-    width: 50%;
-}
-
-.section {
+.loginSection {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     background-image: url('../../assets/images/auth-bg.jpg'); 
     background-repeat: no-repeat;
-    background-size: cover;
-  }
+    background-size: cover;   
+}
 
-  .error {
+.error {
     font-size: 13px;
     color: red;
     font-weight: 600;
@@ -23,4 +19,3 @@
         outline: none;
     }
   }
-  
