@@ -1,34 +1,19 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
-import Register from './Components/Register/Register';
-import Login from './Components/Login/Login';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Sidebar from './Components/SideBar/sidebar';
-import Appointments from './Components/Appointments/Appointments';
+import { useLocation } from 'react-router-dom';
 
-function Layout() {
+const Layout = ({ children }) => {
   const location = useLocation();
-  const [showSidebar, setShowSidebar] = useState(true);
-
-  useEffect(() => {
-    if (location.pathname === '/login' || location.pathname === '/register') {
-      setShowSidebar(false);
-    } else {
-      setShowSidebar(true);
-    }
-  }, [location]);
+  const shouldRenderSidebar = location.pathname !== '/register' && location.pathname !== '/login';
 
   return (
-    <div className="flex h-screen">
-      {showSidebar && <Sidebar />}
-      <div className="flex flex-1 justify-center items-center">
-        <Routes>
-          <Route path='/register' element={<Register />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/appointments' element={<Appointments />} />
-        </Routes>
+    <div className="app-container">
+      {shouldRenderSidebar && <Sidebar />}
+      <div className="main-content">
+        {children}
       </div>
     </div>
   );
-}
+};
 
 export default Layout;
