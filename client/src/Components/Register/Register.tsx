@@ -40,7 +40,7 @@ const Register = () => {
       email: '',
       password: '',
       confirmPassword: '',
-      roleId: undefined,
+      roleId: "",
       image: "",
       cv: "",
     },
@@ -54,7 +54,7 @@ const Register = () => {
       }
     },
   });
-  
+
   const mutation = useMutation(
     (data: UserData) => axios.post('http://localhost:3000/auth/register', data),
     {
@@ -62,7 +62,7 @@ const Register = () => {
         const { data } = response;
         if (data && data.success) {
           navigate('/login');
-          message.success(data.success); 
+          message.success(data.success);
         }
       },
       onError: (error) => {
@@ -75,14 +75,14 @@ const Register = () => {
       },
     }
   );
-  
-  
+
+
 
   const [selectedRole, setSelectedRole] = useState('');
 
   const fetchRoles = async () => {
     const response = await axios.get('http://localhost:3000/roles');
-    
+
     return response.data;
   };
 
@@ -94,17 +94,16 @@ const Register = () => {
   // };
 
   const handleSlectForm = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log('formik.values:', formik.values);
-    console.log('event:', event);
-    
     const selectedRoleId = event.target.value;
     console.log(selectedRoleId);
-    
+
     formik.setValues({
-        ...formik.values,
-        roleId: selectedRoleId, // Set the selected value to roleId
+      ...formik.values,
+      roleId: selectedRoleId, // Set the selected value to roleId
+
     });
-};
+  };
+  console.log(formik.values.roleId);
 
   return (
     <section className={styles.registerSection}>
@@ -242,21 +241,24 @@ const Register = () => {
                 )}
               </div>
             </div>
-            {selectedRole === 'Medecin' && (
-              <div className='flex-grow'>
-                <label htmlFor="cv" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">CV <span className='text-red-600'>*</span> </label>
-                <input
-                  type="file"
-                  id="cv"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  name="cv"
-                  value={formik.values.cv}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                {formik.touched.cv && formik.errors.cv && (
-                  <div className={styles.error}>{formik.errors.cv}</div>
-                )}
+            {formik.values.roleId === selectedRole && (
+              <div>
+                <div className='flex-grow'>
+                  <label htmlFor="cv" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">CV <span className='text-red-600'>*</span> </label>
+                  <input
+                    type="file"
+                    id="cv"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    name="cv"
+                    value={formik.values.cv}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  {formik.touched.cv && formik.errors.cv && (
+                    <div className={styles.error}>{formik.errors.cv}</div>
+                  )}
+                </div>
+                <h1>hhhhhh</h1>
               </div>
             )}
             <div className="flex justify-between items-center">
@@ -264,7 +266,7 @@ const Register = () => {
                 type="submit"
                 // disabled={isSubmitting}
                 className="text-white bg-purple-900 hover:bg-purple-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                // onClick={() => formik.handleSubmit()}
+              // onClick={() => formik.handleSubmit()}
               >
                 {/* {isSubmitting ? 'Submitting...' : 'Register'} */}
                 Register

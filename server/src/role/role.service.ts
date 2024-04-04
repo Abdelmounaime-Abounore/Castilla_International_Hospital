@@ -11,4 +11,9 @@ export class RoleService {
   async findRoles(): Promise<Role[]> {
     return await this.roleModel.find({ roleName: { $in: ["Medecin", "Client"] } }).exec();
   }
+
+  async findRoleById(roleId: string): Promise<Role | null> {
+    const role = await this.roleModel.findById(roleId);
+    return role; // Return the role found or null if not found
+  }
 }

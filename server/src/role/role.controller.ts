@@ -10,4 +10,9 @@ export class RoleController {
   async getRoles(): Promise<Role[]> {
     return await this.roleService.findRoles();
   }
+
+  @Get(':id')
+  async getRoleById(@Param('id') id: string): Promise<Role | null> {
+    return await this.roleService.findRoleById(id);
+  }
 }
