@@ -17,7 +17,7 @@ const Register = () => {
     password: string;
     confirmPassword: string;
     roleId: undefined;
-    cv: string;
+    speciality: string;
     image: string;
   }
 
@@ -30,7 +30,6 @@ const Register = () => {
       .oneOf([Yup.ref('password'), null], '* Passwords must match')
       .required('* Confirm Password is required'),
     roleId: Yup.string().required('* Role is required'),
-    // cv: Yup.string().required('* Cv is required'),
   });
 
   const formik = useFormik({
@@ -42,7 +41,7 @@ const Register = () => {
       confirmPassword: '',
       roleId: "",
       image: "",
-      cv: "",
+      specialityId: "",
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -76,7 +75,7 @@ const Register = () => {
     }
   );
 
-  const [selectedRole, setSelectedRole] = useState('');
+  const [showSpecialityInput, setShowSpecialityInput] = useState<boolean>(false);
 
   const fetchRoles = async () => {
     const response = await axios.get('http://localhost:3000/roles');
@@ -84,14 +83,15 @@ const Register = () => {
     return response.data;
   };
 
+  const fetchSpeciality = async () => {
+    const response = await axios.get('http://localhost:3000/roles');
+
+    return response.data;
+  };
+
   const { data: roles = [], isError: isRoleeError } = useQuery('roles', fetchRoles);
 
-  // if (isLoading) return <div>Loading...</div>;
-  // if (isError) {
-  //   return <div>Error fetching roles</div>
-  // };
-
-  const handleSlectForm = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRoleChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedRoleId = event.target.value;
 
     formik.setValues({
@@ -101,23 +101,25 @@ const Register = () => {
 
     try {
       const response = await axios.get(`http://localhost:3000/roles/${selectedRoleId}`);
-      console.log(response.data);
+      const fetchedRole = response.data;
+      if (fetchedRole.roleName === 'Medecin') {
+        setShowSpecialityInput(true);
+      } else {
+        setShowSpecialityInput(false);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
-  const roleId = formik.values.roleId;
+  
+  const handleSpecialityChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedSpecialityId = event.target.value;
 
-
-  const fetchRole = async (roleId: string) => {
-    try {
-      const response = await axios.get(`/api/roles/${roleId}`);
-      return response.data;
-    } catch (error) {
-      throw new Error('Failed to fetch role');
-    }
+    formik.setValues({
+      ...formik.values,
+      specialityId: selectedSpecialityId,
+    });
   };
-
   return (
     <section className={styles.registerSection}>
       <div className="flex flex-col items-center justify-center h-screen">
@@ -220,10 +222,10 @@ const Register = () => {
                 <label htmlFor="roleId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Role <span className='text-red-600'>*</span> </label>
                 <select
                   // className="custom-select"
-                  name="companyId"
+                  name="roleId"
                   value={formik.values.roleId}
                   className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  onChange={handleSlectForm}
+                  onChange={handleRoleChange}
                 >
                   <option value="">Register as ..</option>
                   {roles.map((role) => (
@@ -254,25 +256,26 @@ const Register = () => {
                 )}
               </div>
             </div>
-            {formik.values.roleId === selectedRole && (
-              <div>
+            {showSpecialityInput && (
                 <div className='flex-grow'>
-                  <label htmlFor="cv" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">CV <span className='text-red-600'>*</span> </label>
-                  <input
-                    type="file"
-                    id="cv"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    name="cv"
-                    value={formik.values.cv}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  {formik.touched.cv && formik.errors.cv && (
-                    <div className={styles.error}>{formik.errors.cv}</div>
+                  <label htmlFor="roleId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Your Speciality<span className='text-red-600'>*</span> </label>
+                  <select
+                    name="specialityId"
+                    value={formik.values.specialityId}
+                    className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={handleSpecialityChange}
+                  >
+                    <option value="">Register as ..</option>
+                    {roles.map((role) => (
+                      <option key={role._id} value={role._id}>
+                        {role.roleName}
+                      </option>
+                    ))}
+                  </select>
+                  {formik.touched.speciality && formik.errors.speciality && (
+                    <div className={styles.error}>{formik.errors.speciality}</div>
                   )}
                 </div>
-                <h1>hhhhhh</h1>
-              </div>
             )}
             <div className="flex justify-between items-center">
               <button

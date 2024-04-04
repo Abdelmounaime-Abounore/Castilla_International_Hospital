@@ -14,6 +14,6 @@ export class RoleService {
 
   async findRoleById(roleId: string): Promise<Role | null> {
     const role = await this.roleModel.findById(roleId);
-    return role; // Return the role found or null if not found
+    return role; 
   }
 }

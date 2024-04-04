@@ -45,4 +45,8 @@ export class SpecialityService {
     // export default sendMailToUser;
     
   }
+
+  async findSpeciality(): Promise<Speciality[]> {
+    return await this.specialityModel.find();
+  }
 }
