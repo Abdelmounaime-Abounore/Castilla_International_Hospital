@@ -4,6 +4,7 @@ import { RoleModule } from './role/role.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { SpecialityModule } from './speciality/speciality.module';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.DATABASE_URL),
-    UserModule, RoleModule,
+    UserModule, RoleModule, SpecialityModule
   ],
   controllers: [],
   providers: [],

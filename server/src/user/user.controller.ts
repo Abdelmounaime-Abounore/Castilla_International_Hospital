@@ -11,7 +11,6 @@ export class UserController {
     
     try {
       const result = await this.userService.registerUser(userData);
-      console.log("test2");
       return result;
     } catch (error) {
       return { error: error.message };
