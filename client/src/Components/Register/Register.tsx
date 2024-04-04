@@ -83,13 +83,14 @@ const Register = () => {
     return response.data;
   };
 
-  const fetchSpeciality = async () => {
-    const response = await axios.get('http://localhost:3000/roles');
+  const fetchSpecialities = async () => {
+    const response = await axios.get('http://localhost:3000/speciality');
 
     return response.data;
   };
 
   const { data: roles = [], isError: isRoleeError } = useQuery('roles', fetchRoles);
+  const { data: specialities = [], isError: isSpecialityError } = useQuery('specialities', fetchSpecialities);
 
   const handleRoleChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedRoleId = event.target.value;
@@ -221,7 +222,6 @@ const Register = () => {
               <div>
                 <label htmlFor="roleId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Role <span className='text-red-600'>*</span> </label>
                 <select
-                  // className="custom-select"
                   name="roleId"
                   value={formik.values.roleId}
                   className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -258,22 +258,22 @@ const Register = () => {
             </div>
             {showSpecialityInput && (
                 <div className='flex-grow'>
-                  <label htmlFor="roleId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Your Speciality<span className='text-red-600'>*</span> </label>
+                  <label htmlFor="specialityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Your Speciality<span className='text-red-600'>*</span> </label>
                   <select
                     name="specialityId"
                     value={formik.values.specialityId}
                     className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     onChange={handleSpecialityChange}
                   >
-                    <option value="">Register as ..</option>
-                    {roles.map((role) => (
-                      <option key={role._id} value={role._id}>
-                        {role.roleName}
+                    <option value="">Select Your Speciality ..</option>
+                    {specialities.map((speciality) => (
+                      <option key={speciality._id} value={speciality._id}>
+                        {speciality.name}
                       </option>
                     ))}
                   </select>
-                  {formik.touched.speciality && formik.errors.speciality && (
-                    <div className={styles.error}>{formik.errors.speciality}</div>
+                  {formik.touched.specialityId && formik.errors.specialityId && (
+                    <div className={styles.error}>{formik.errors.specialityId}</div>
                   )}
                 </div>
             )}
