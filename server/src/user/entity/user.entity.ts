@@ -21,8 +21,8 @@ export class User {
     @Prop({ type: Types.ObjectId, ref: 'Role', required: true }) 
     roleId: Types.ObjectId;
 
-    @Prop() 
-    cv: string;
+    @Prop({ type: Types.ObjectId, ref: 'Speciality' }) 
+    specialityId: Types.ObjectId;
 
     @Prop({ default: false }) 
     isActive: boolean;

@@ -8,6 +8,7 @@ export class UserController {
 
   @Post("register")
   async registerUser(@Body() userData: any): Promise<any> {
+    console.log("userData: ", userData);
     
     try {
       const result = await this.userService.registerUser(userData);

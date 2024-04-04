@@ -6,7 +6,7 @@ export class CreateUserDto {
     name: string;
 
     @IsNotEmpty({ message: 'Phone number is required' })
-    @Matches(/^[0-9]{10}$/, { message: 'Phone number must contain exactly 10 numbers' })
+    // @Matches(/^[0-9]{10}$/, { message: 'Phone number must contain exactly 10 numbers' })
     phoneNumber: string;
 
     @IsNotEmpty({ message: 'Email is required' })
@@ -28,4 +28,7 @@ export class CreateUserDto {
 
     @IsNotEmpty({ message: 'Role is required' })
     roleId: string;
+
+    @IsNotEmpty()
+    specialityId: string;
 }

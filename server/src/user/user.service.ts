@@ -24,12 +24,12 @@ export class UserService {
     @InjectModel(Role.name) private readonly roleModel: Model<Role>,
     private readonly userUtilService: UserUtilService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async registerUser(userData: any): Promise<any> {
-    
+
     const createUserDto = new CreateUserDto();
-    
+
     createUserDto.name = userData.name;
     createUserDto.phoneNumber = userData.phoneNumber;
     createUserDto.email = userData.email;
@@ -37,12 +37,13 @@ export class UserService {
     createUserDto.confirmPassword = userData.confirmPassword;
     createUserDto.image = userData.image;
     createUserDto.roleId = userData.roleId;
-    createUserDto.cv = userData.cv;    
-    
+    createUserDto.cv = userData.cv;
+    createUserDto.specialityId = userData.specialityId;
+
     // console.log(createUserDto);
     // Validate the DTO using class-validator
     const validationErrors = await validate(createUserDto);
-    
+
     if (validationErrors.length > 0) {
       // Validation errors occurred, throw an exception with the details
       console.error(validationErrors);
@@ -54,7 +55,7 @@ export class UserService {
     if (emailExists) {
       throw new NotFoundException('This Email is already exists. Try to sign in.');
     }
-    
+
     if (userData.password !== userData.confirmPassword) {
       throw new ConflictException('Password and Confirm Password do not match.');
     }
@@ -64,13 +65,13 @@ export class UserService {
     const hashedPassword = await bcryptjs.hash(userData.password, genSalt);
 
     // Check if roleId exists in the roles collection
-    
+
     const roleExists = await this.roleModel.findById(userData.roleId);
 
     if (!roleExists) {
       throw new NotFoundException('Invalid roleId. Role not found.');
     }
-    
+
     // Create a new user instance
     const newUser = new this.userModel({
       name: userData.name,
@@ -79,24 +80,27 @@ export class UserService {
       password: hashedPassword,
       image: userData.image,
       roleId: userData.roleId,
+      specialityId: userData.specialityId,
       isActive: false,
     });
-    
+
     // Save the new user
     let savedUser;
     try {
-        savedUser = await newUser.save();
-        console.log("Result of newUser.save():", savedUser);
+      savedUser = await newUser.save();
+      console.log("Result of newUser.save():", savedUser);
     } catch (error) {
-        console.error("Error saving user:", error);
-        throw error; // Rethrow the error to propagate it to the caller
-    }    console.log("savedUser");
+      console.error("Error saving user:", error);
+      throw error; // Rethrow the error to propagate it to the caller
+    } console.log("savedUser");
     let userObject = savedUser.toObject();
     // Remove the password from the response
     delete userObject.password;
     // Generate and send activation email
-    const token = jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
-    
+    const token = jwt.sign(userData, process.env.SECRET_KEY, { expiresIn: '5m' });
+    console.log(token);
+
+
     let mailType = {
       from: 'castilla@hospital.com',
       to: userData.email,
@@ -126,29 +130,22 @@ export class UserService {
             text-decoration: none; 
           }
           </style>`,
-        };
-        await this.userUtilService.sendMailToUser(mailType);
-        
-        return { success: 'Registration Successfully, Please Verify Your Email', newUser: userObject };
-        
+    };
+    await this.userUtilService.sendMailToUser(mailType);
 
-    // import * as nodemailer from 'nodemailer';
-
-    
-    // export default sendMailToUser;
-    
+    return { success: 'Registration Successfully, Please Verify Your Email', newUser: userObject };
   }
-  
+
   async verifyUserToken(token: string): Promise<any> {
     try {
-      const decodedToken: JwtPayload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET) as JwtPayload;
+      const decodedToken: JwtPayload = jwt.verify(token, process.env.SECRET_KEY) as JwtPayload;
       return decodedToken.email;
-  } catch (error) {
+    } catch (error) {
       console.error('Error:', error.message);
       return null;
+    }
   }
-  }
-  
+
   async verifyTokenAndActivateAccount(token: string): Promise<boolean> {
     const userMail = await this.verifyUserToken(token);
     if (userMail) {
@@ -158,16 +155,16 @@ export class UserService {
       throw new NotFoundException('Invalid or expired token.');
     }
   }
-  
+
   async login(loginData: any): Promise<{ token: string }> {
     const { email, password } = loginData;
     console.log(email);
-    
+
     // Find user by email
     const user = await this.userModel.findOne({ email });
     console.log(user);
     if (!user) {
-      
+
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -180,7 +177,7 @@ export class UserService {
     // Generate JWT token
     const token = this.jwtService.sign({ userId: user.id });
     console.log(token);
-    
+
     return { token };
   }
 }

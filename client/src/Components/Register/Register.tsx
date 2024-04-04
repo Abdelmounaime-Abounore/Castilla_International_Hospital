@@ -59,10 +59,10 @@ const Register = () => {
     {
       onSuccess: (response) => {
         const { data } = response;
-        if (data && data.success) {
-          navigate('/login');
-          message.success(data.success);
-        }
+        // if (data && data.success) {
+        navigate('/login');
+        message.success("Register successful, please verify your Email");
+        // }
       },
       onError: (error) => {
         if (error.response && error.response.data && error.response.data.error) {
@@ -112,7 +112,7 @@ const Register = () => {
       console.error('Error fetching data:', error);
     }
   };
-  
+
   const handleSpecialityChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedSpecialityId = event.target.value;
 
@@ -242,11 +242,11 @@ const Register = () => {
               <div>
                 <label htmlFor="image" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Profile Image</label>
                 <input
-                  type="file"
+                  type="text"
                   name="image"
                   id="image"
-                  accept="image/*"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-gray-50 focus:outline-none border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Profile Image"
                   value={formik.values.image}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -257,25 +257,25 @@ const Register = () => {
               </div>
             </div>
             {showSpecialityInput && (
-                <div className='flex-grow'>
-                  <label htmlFor="specialityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Your Speciality<span className='text-red-600'>*</span> </label>
-                  <select
-                    name="specialityId"
-                    value={formik.values.specialityId}
-                    className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    onChange={handleSpecialityChange}
-                  >
-                    <option value="">Select Your Speciality ..</option>
-                    {specialities.map((speciality) => (
-                      <option key={speciality._id} value={speciality._id}>
-                        {speciality.name}
-                      </option>
-                    ))}
-                  </select>
-                  {formik.touched.specialityId && formik.errors.specialityId && (
-                    <div className={styles.error}>{formik.errors.specialityId}</div>
-                  )}
-                </div>
+              <div className='flex-grow'>
+                <label htmlFor="specialityId" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white text-left">Select Your Speciality<span className='text-red-600'>*</span> </label>
+                <select
+                  name="specialityId"
+                  value={formik.values.specialityId}
+                  className="bg-gray-50 border border-gray-300 text-gray-900  focus:outline-none sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={handleSpecialityChange}
+                >
+                  <option value="">Select Your Speciality ..</option>
+                  {specialities.map((speciality) => (
+                    <option key={speciality._id} value={speciality._id}>
+                      {speciality.name}
+                    </option>
+                  ))}
+                </select>
+                {formik.touched.specialityId && formik.errors.specialityId && (
+                  <div className={styles.error}>{formik.errors.specialityId}</div>
+                )}
+              </div>
             )}
             <div className="flex justify-between items-center">
               <button
