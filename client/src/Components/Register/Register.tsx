@@ -76,8 +76,6 @@ const Register = () => {
     }
   );
 
-
-
   const [selectedRole, setSelectedRole] = useState('');
 
   const fetchRoles = async () => {
@@ -95,15 +93,30 @@ const Register = () => {
 
   const handleSlectForm = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedRoleId = event.target.value;
-    console.log(selectedRoleId);
 
     formik.setValues({
       ...formik.values,
-      roleId: selectedRoleId, // Set the selected value to roleId
-
+      roleId: selectedRoleId,
     });
+
+    try {
+      const response = await axios.get(`http://localhost:3000/roles/${selectedRoleId}`);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
-  console.log(formik.values.roleId);
+  const roleId = formik.values.roleId;
+
+
+  const fetchRole = async (roleId: string) => {
+    try {
+      const response = await axios.get(`/api/roles/${roleId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error('Failed to fetch role');
+    }
+  };
 
   return (
     <section className={styles.registerSection}>
