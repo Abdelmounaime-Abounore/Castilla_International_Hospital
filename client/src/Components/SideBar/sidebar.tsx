@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from '../../assets/images/logo.png';
-import Home from '../Appointments/Appointments';
+import Home from '../DoctorsList/DoctorsList';
 const Sidebar = () => {
     return (
         <>
