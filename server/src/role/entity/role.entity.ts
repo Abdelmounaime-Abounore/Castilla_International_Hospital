@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 @Schema()
 export class Role {
     @Prop({ required: true })
-    name: string;
+    roleName: string;
 }
 
 export type RoleDocument = Role & Document;

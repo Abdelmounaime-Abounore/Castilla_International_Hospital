@@ -19,8 +19,8 @@ https://github.com/Abdelmounaime-Abounore/Castilla_International_Hospital.git
 
 2. Navigate to the backend directory:
 
-cd Castilla_International_Hospital
   ```
+cd Castilla_International_Hospital
 cd server
   ```
 
@@ -31,14 +31,14 @@ npm install
   ```
 
 4. Configuration
-  ```
+  
 - Create the .env file environment variables.
 
 - Add DATABASE_URL variable for your database configuration.
 
 - Add SECRET_KEY variable for your secret key.
 
-  ```
+    
 5. Running the Application
 - To run the application locally, use the following command:
 
@@ -68,7 +68,7 @@ cd client
 
 9. Running the Application
  - To run the application locally, use the following command:
- 
+
    ```
    npm run dev
    ```
