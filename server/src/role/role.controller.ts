@@ -1,7 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { RoleService } from './role.service';
 import { Role } from './entity/role.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('roles') 
 @Controller('roles')
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
