@@ -20,10 +20,15 @@ https://github.com/Abdelmounaime-Abounore/Castilla_International_Hospital.git
 2. Navigate to the backend directory:
 
 cd Castilla_International_Hospital
+  ```
 cd server
+  ```
 
 3. Install dependencies using npm:
+
+  ```
 npm install
+  ```
 
 4. Configuration
   ```
@@ -33,11 +38,14 @@ npm install
 
 - Add SECRET_KEY variable for your secret key.
 
+  ```
 5. Running the Application
 - To run the application locally, use the following command:
+
   ```
   npm run dev:start
   ```
+
 6. Testing
 - For unit tests:
   ```
@@ -48,15 +56,19 @@ npm install
 
 7. Navigate to the frontend directory:
 
+ ```
 cd client
+ ```
 
 8. Install dependencies using npm:
+
  ```
  npm install
  ```
 
 9. Running the Application
  - To run the application locally, use the following command:
+ 
    ```
    npm run dev
    ```
